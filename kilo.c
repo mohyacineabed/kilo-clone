@@ -5,6 +5,10 @@
 #include <ctype.h>
 #include <errno.h>
 
+/*** defines ***/
+
+#define CTRL_KEY(k) ((k) & 0x1f)    //mimic the CTRL key
+
 /*** data ***/
 
 struct termios orig_termios;
@@ -31,9 +35,9 @@ void enableRawMode() {
   struct termios raw = orig_termios;
 
   raw.c_iflag &= ~(ICRNL | IXON);
-  // Disable Ctrl-S and Ctrl-Q (software flow control)
   // Disable carriage return to newline translation (fixes Ctrl-M)
-  //
+  // Disable Ctrl-S and Ctrl-Q (software flow control)
+
   raw.c_oflag &= ~(OPOST);  // disable translating '\n' to '\r\n' in the output
 
   raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
@@ -68,7 +72,7 @@ int main() {
         } else {
             printf("%d ('%c')\r\n", c, c);
         }
-        if (c == 'q') break;
+        if (c == CTRL_KEY('q')) break;  //break if c is 'CTRL+Q'
     }
 
     return 0;
