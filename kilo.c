@@ -22,28 +22,33 @@ void enableRawMode() {
   //
   raw.c_oflag &= ~(OPOST);  // disable translating '\n' to '\r\n' in the output
 
-  raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);   //disable echo, canonical mode, ctrl-v and signals
-
-  tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+  raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
   // Disable echo (ECHO)
   // Disable canonical mode (ICANON), so input is read byte-by-byte
   // Disable Ctrl-V (IEXTEN) — for literal input mode
   // Disable signal keys like Ctrl-C and Ctrl-Z (ISIG)
+
+  raw.c_cc[VMIN] = 0;   //set min bytes needed before read() can return
+  raw.c_cc[VTIME] = 1;  //set max time to wait before read() returns (ms)
+
+  tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+
 }
 
 int main() {
 
     enableRawMode();
 
-    char c;
-    while(read(STDIN_FILENO, &c, 1) == 1 && c != 'q') { //read(fd, buffer, count)
-
-        if(iscntrl(c)) {
-
+    while (1) {
+        char c = '\0';
+        read(STDIN_FILENO, &c, 1);  //read(fd, buffer, count)
+        if (iscntrl(c)) {
             printf("%c\r\n", c);
         } else {
             printf("%d ('%c')\r\n", c, c);
         }
+        if (c == 'q') break;
     }
+
     return 0;
 }
