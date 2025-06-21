@@ -69,6 +69,8 @@ char editorReadKey() {
 void editorRefreshScreen() {
     write(STDOUT_FILENO, "\x1b[2J", 4);
     //write esc char "\x1b" followed by '[' and "2J" to clear the screen
+    write(STDOUT_FILENO, "\x1b[H", 3);
+    //reposition the cursor to top of the screen ("<esc>[Row ; Col H")
 }
 
 /*** input ***/
