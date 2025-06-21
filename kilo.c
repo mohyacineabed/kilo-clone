@@ -64,6 +64,13 @@ char editorReadKey() {
     return c;
 }
 
+/*** output ***/
+
+void editorRefreshScreen() {
+    write(STDOUT_FILENO, "\x1b[2J", 4);
+    //write esc char "\x1b" followed by '[' and "2J" to clear the screen
+}
+
 /*** input ***/
 
 void editorProcessKeypress() {
@@ -83,6 +90,7 @@ int main() {
     enableRawMode();
 
     while (1) {
+        editorRefreshScreen();
         editorProcessKeypress();
     }
 
