@@ -69,11 +69,22 @@ char editorReadKey() {
 
 /*** output ***/
 
+void editorDrawRows() {
+    int y;
+    for (y = 0; y < 24; y++) {
+        write(STDOUT_FILENO, "~\r\n", 3);
+    }
+}
+
 void editorRefreshScreen() {
     write(STDOUT_FILENO, "\x1b[2J", 4);
     //write esc char "\x1b" followed by '[' and "2J" to clear the screen
     write(STDOUT_FILENO, "\x1b[H", 3);
     //reposition the cursor to top of the screen ("<esc>[Row ; Col H")
+
+    editorDrawRows();
+
+    write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 /*** input ***/
