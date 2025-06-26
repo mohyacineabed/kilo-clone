@@ -171,6 +171,7 @@ void editorDrawRows(struct abuf *ab) {
         if (y == E.screenrows / 3) {
             char welcome[80];
             int welcomelen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
+            // snprintf() prevents buffer overflow
             if (welcomelen > E.screencols) {
                 welcomelen = E.screencols;
             }
@@ -219,16 +220,24 @@ void editorRefreshScreen() {
 void editorMoveCursor(int key) {
     switch (key) {
         case ARROW_UP:
-            E.cy--;
+            if (E.cy != 0) {
+                E.cy--;
+            }
             break;
         case ARROW_DOWN:
-            E.cy++;
+            if (E.cy != E.screenrows - 1) {
+                E.cy++;
+            }
             break;
         case ARROW_LEFT:
-            E.cx--;
+            if (E.cx != 0) {
+                E.cx--;
+            }
             break;
         case ARROW_RIGHT:
-            E.cx++;
+            if (E.cx != E.screencols - 2) {
+                E.cx++;
+            }
             break;
     }
 }
